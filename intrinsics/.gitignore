@@ -1,0 +1,10 @@
+perf.data
+pol?.c.bin
+pol?.py.bin
+process
+*.swp
+input
+*.html
+*.odg#
+*.odg
+*.png
