@@ -12,8 +12,13 @@ m = hashlib.md5()
 while len(randdata) < 8*30000:
   m.update(b"ahoj")
   randdata += m.digest()
-with open("input", "wb") as f:
-  f.write(randdata)
+
+arr = np.frombuffer(randdata, dtype=np.uint16)
+# ensure highest bits are the same
+arr = (arr & 0x17FF) | (arr & 0x8000) | ((arr & 0x8000) >> 1) | ((arr & 0x8000) >> 2) | ((arr & 0x8000) >> 4)
+
+arr.tofile("input")
+
 
 data = np.fromfile("input", dtype=np.uint32)
 iterations = 10000

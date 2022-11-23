@@ -5,7 +5,6 @@ CC=gcc
 CFLAGS="
 -O3
 -fno-common
--fno-strict-aliasing 
 -fno-omit-frame-pointer 
 -std=gnu11 
 -Wall 
@@ -47,6 +46,6 @@ rm -f pol?.py.bin
 echo "Testing NumPy implementation"
 ./process.py
 
-for i in NAIVE UNROLL X64 SSE AVX; do
+for i in NAIVE UNROLL X64 LUT SSE AVX; do
   testone $i
 done

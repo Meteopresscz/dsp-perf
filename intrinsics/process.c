@@ -25,6 +25,15 @@ void* xmalloc(size_t s) {
   return aligned_alloc(64, s);
 }
 
+float lut[4096];
+void prepare_lut() {
+  for (int i=0; i<4096; i++) {
+    int16_t nr = ((i+2048) % 4096) - 2048;
+    lut[i]=(float)nr;
+    //printf("lut[%i] = %f\n", i, lut[i]);
+  }
+}
+
 int main() {
 
   /* read input */
@@ -35,6 +44,8 @@ int main() {
 
   float * outbuf1 = xmalloc(8*SAMPLES);
   float * outbuf2 = xmalloc(8*SAMPLES);
+
+  prepare_lut();
 
   meas();
 
@@ -86,11 +97,30 @@ int main() {
       outbuf2[i2 + 1] = (float)raw3;
     }
 #endif
+#ifdef LUT
+    float *op1=outbuf1;
+    float *op2=outbuf2;
+    int16_t *ip=inbuf;
+    while (ip<inbuf+4*SAMPLES) {
+      *op1++=lut[*ip++ & 0x0fff];
+      *op1++=lut[*ip++ & 0x0fff];
+      *op2++=lut[*ip++ & 0x0fff];
+      *op2++=lut[*ip++ & 0x0fff];
+    }
+#endif
 #ifdef X64
     for (int i = 0; i < SAMPLES*4; i += 4) {
       uint64_t* raw = (uint64_t*)&inbuf[i + 0];
-      uint64_t mask = (*raw >> 1) & 0x1000100010001000;
+#define META_MASK 0x1000100010001000ULL
+      uint64_t mask = (*raw >> 1) & META_MASK;
+      uint64_t mask2 = ~META_MASK;
+
+      //printf("%16lX %16lX %16lX\n", mask, mask2, *raw);
+
+      *raw &= mask2;
+      //printf("%16lX\n", *raw);
       *raw |= mask;
+      //printf("%16lX\n\n", *raw);
 
       const int i2 = i >> 1;
 
