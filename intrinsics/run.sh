@@ -27,7 +27,7 @@ seq 100000 | head -c 240000 > input
 echo "Testing NumPy implementation"
 ./process.py
 
-for i in NAIVE UNROLL SSE AVX; do
+for i in NAIVE UNROLL X64 SSE AVX; do
   echo -e "\n\n\n"
   echo "Compiling $i implementation"
   rm -f process

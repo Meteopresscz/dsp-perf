@@ -86,6 +86,21 @@ int main() {
       outbuf2[i2 + 1] = (float)raw3;
     }
 #endif
+#ifdef X64
+    for (int i = 0; i < SAMPLES*4; i += 4) {
+      uint64_t* raw = (uint64_t*)&inbuf[i + 0];
+      uint64_t mask = (*raw >> 1) & 0x1000100010001000;
+      *raw |= mask;
+
+      const int i2 = i >> 1;
+
+      outbuf1[i2] = (float)inbuf[i + 0];
+      outbuf1[i2 + 1] = (float)inbuf[i + 1];
+
+      outbuf2[i2] = (float)inbuf[i + 2];
+      outbuf2[i2 + 1] = (float)inbuf[i + 3];
+    }
+#endif
 #ifdef SSE
 #pragma message "Using SSE4.1 implementation"
     __m128i EFFF = _mm_set1_epi16(0xEFFF);
