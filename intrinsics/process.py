@@ -5,6 +5,16 @@ from icecream import ic
 import sys
 import time
 
+# generate testing data
+randdata = b''
+import hashlib
+m = hashlib.md5()
+while len(randdata) < 8*30000:
+  m.update(b"ahoj")
+  randdata += m.digest()
+with open("input", "wb") as f:
+  f.write(randdata)
+
 data = np.fromfile("input", dtype=np.uint32)
 iterations = 10000
 
